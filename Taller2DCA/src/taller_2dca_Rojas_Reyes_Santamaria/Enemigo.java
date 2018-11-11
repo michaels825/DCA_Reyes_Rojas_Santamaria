@@ -10,9 +10,7 @@ public class Enemigo extends Personaje {
 
 	public Enemigo(Logica log, float x, float y) {
 		super(log, x, y);
-
-		personaje = app.loadImage("Enemigo.png");
-
+		personaje = app.loadImage("enemigo.png");
 	}
 
 	@Override
@@ -21,41 +19,32 @@ public class Enemigo extends Personaje {
 		app.image(personaje, pos.x, pos.y);
 		app.noFill();
 		app.stroke(255);
-		app.ellipse(pos.x, pos.y, personaje.width, personaje.height);
-
-		if (pistola != null) {
-			app.stroke(255);
-			app.strokeWeight(5);
-			app.line(pos.x, pos.y, pistola.getX(), pistola.getY());
-			app.noStroke();
-		}
 		nivel(pos.x, pos.y);
-
+		if (protegido) {
+			app.ellipseMode(app.CENTER);
+			app.noStroke();
+			app.fill(255,100);
+			app.ellipse(pos.x, pos.y, 150, 150);
+		}
 	}
 
 	@Override
 	public void mover() {
 		if (pistola == null && pos != null && vel != null && personaje != null) {
-
-			if (pos.x - personaje.width / 2 <= 0 || pos.x + personaje.width / 2 >= app.width) {
-
+			if (pos.x - personaje.width / 2 <= 340 || pos.x + personaje.width / 2 >= app.width - 340) {
 				vel.x *= -1;
 				pos.x += vel.x * 2;
 			}
-
-			if (pos.y - personaje.height / 2 <= 0 || pos.y + personaje.height / 2 >= app.height) {
+			if (pos.y - personaje.height / 2 <= 160 || pos.y + personaje.height / 2 >= app.height - 30) {
 				vel.y *= -1;
 				pos.y += vel.y * 2;
 			}
-
 			pos.x += vel.x;
 			pos.y += vel.y;
 
 			if (Logica.log.getElementos() != null) {
-
 				for (int i = 0; i < Logica.log.getElementos().size(); i++) {
 					Elemento e = Logica.log.getElementos().get(i);
-
 					if (e instanceof Pistola) {
 						Pistola p = (Pistola) e;
 						if (p.isPerseguida() == false) {
@@ -82,11 +71,8 @@ public class Enemigo extends Personaje {
 
 	@Override
 	public void atacar() {
-
 		int time = app.millis() / 1000;
 		int frecuencia = 1;
-
-		// System.out.println(time);
 
 		if (time % 5 == 0 && counter == 0) {
 			int tipo = (int) app.random(0, 5);
@@ -94,12 +80,9 @@ public class Enemigo extends Personaje {
 				Bala b = new Bala(app);
 				PVector destino = new PVector(log.getJugador().getPos().x, log.getJugador().getPos().y);
 				b.movimientoBala(destino, pos);
-
 				balas.add(b);
 			}
-
 			counter = 1;
-
 		} else if (counter >= 1 && counter < 80) {
 			counter++;
 		} else {
@@ -108,22 +91,35 @@ public class Enemigo extends Personaje {
 	}
 
 	public void run() {
-
 		while (vivo) {
-
 			try {
 				mover();
 				recoger();
-
+				contacto();
 				atacar();
-
 				sleep(25);
 			} catch (Exception e) {
 				e.printStackTrace();
-
 				vivo = false;
-
 			}
 		}
+	}
+
+	@Override
+	public void contacto() {
+		for (int i = 0; i < balas.size(); i++) {
+			PVector copi = balas.get(i).getPos().copy();
+			if (PApplet.dist(copi.x, copi.y, log.getJugador().getPos().x, log.getJugador().getPos().y) < 75
+					&& log.getJugador().getProtegido()) {
+				balas.remove(i);
+				return;
+			}
+			if (PApplet.dist(copi.x, copi.y, log.getJugador().getPos().x, log.getJugador().getPos().y) < 20) {
+				balas.remove(i);
+				log.getJugador().restarVida();
+				return;
+			}
+		}
+
 	}
 }

@@ -13,7 +13,6 @@ public abstract class Elemento {
 		this.app = app;
 		this.x = x;
 		this.y = y;
-
 	}
 
 	public abstract void pintar();

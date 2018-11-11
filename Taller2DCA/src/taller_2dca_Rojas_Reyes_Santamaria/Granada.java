@@ -8,17 +8,13 @@ public class Granada extends Elemento {
 		super(app,x,y);
 		this.x = x;
 		this.y = y;
-
-		elemento = app.loadImage("Bomba.png");
-
-	
+		elemento = app.loadImage("granada.png");
 	}
 
 	@Override
 	public void pintar() {
 		app.imageMode(PConstants.CENTER);
 		app.image(elemento, x, y);
-		
 	}
 
 }

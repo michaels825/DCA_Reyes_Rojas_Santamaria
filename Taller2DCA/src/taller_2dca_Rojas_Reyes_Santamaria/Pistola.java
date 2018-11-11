@@ -6,15 +6,11 @@ public class Pistola extends Elemento {
 	public boolean perseguida;
 
 	public Pistola(Main app, float x, float y) {
-		super(app,x,y);
+		super(app, x, y);
 		this.x = x;
 		this.y = y;
-
 		elemento = app.loadImage("arma.png");
-		
 		perseguida = false;
-
-	
 	}
 
 	public boolean isPerseguida() {
@@ -29,7 +25,6 @@ public class Pistola extends Elemento {
 	public void pintar() {
 		app.imageMode(PConstants.CENTER);
 		app.image(elemento, x, y);
-		
 	}
 
 }
